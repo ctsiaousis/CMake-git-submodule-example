@@ -7,7 +7,7 @@ class Entry{
     std::string id;
 protected:
     linalg::matrix variance; // Var(Z)=Cov(Z,Z)
-    std::vector<double> feature_means;
+    linalg::matrix feature_means;
 public:
     Entry();
 
@@ -17,7 +17,7 @@ public:
 
     void setFeatures(std::vector<double> vecIn);
 
-    std::vector<double> getFeatures();
+    linalg::matrix getFeatures();
 
     linalg::matrix getCovarianceMatrix(bool inverse = false);
 

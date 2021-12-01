@@ -2,6 +2,7 @@
 #define LINEARALGEBRA_H
 
 #include <stdexcept>
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <numeric>
@@ -24,12 +25,17 @@ typedef std::vector< std::vector<double> > matrix;
 static matrix getTranspose(matrix src);
 static std::vector<double> getDiagonal(matrix a);
 static double trace(matrix a);
+static double sumOf(matrix a);
 static double getDeterminant(const matrix vect);
 static matrix getCofactor(const matrix vect);
 static matrix getInverse(const matrix vect);
-static matrix multiply(matrix &a, matrix &b);
+static matrix multiply(matrix a, matrix b);
 static void printMatrix(const matrix vect);
 static void printVector(const std::vector<double> vect);
+static matrix getLogOf(matrix src); //TODO: Implement this func
+static void elemWiseOperation(matrix &src, char o, int scalar = -1);
+static matrix elemWiseOperation(matrix m1, char o, matrix m2);
+static bool isMatrixDiagonal(matrix src);
 
 
 
@@ -40,9 +46,120 @@ static void printVector(const std::vector<double> vect);
 void printVector(const std::vector<double> vect) {
     std::cout << "[ ";
     for(std::size_t i = 0; i < vect.size(); i++) {
-            std::cout << vect[i] << ((i < vect.size()-1)?" , ":" ");
+        std::cout << vect[i] << ((i < vect.size()-1)?" , ":" ");
     }
     std::cout << "] \n";
+}
+
+matrix elemWiseOperation(matrix m1, char o, matrix m2) {
+    if(m1.size() != m2.size() || m1.empty() || m2.empty())
+        throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same or are zero");
+
+    matrix retMat = matrix(m1.size(),std::vector<double>(m1[0].size(),0));
+
+    switch (o) {
+    case '+':{
+        for(int i = 0; i < m1.size(); i++){
+            if(m1[i].size()!=m2[i].size()){
+                throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same");
+            }
+            for(int k = 0; k < m1[i].size(); k ++){
+                retMat[i][k] = m1[i][k] + m2[i][k];
+            }
+        }
+        break;
+    }
+    case '-':{
+        for(int i = 0; i < m1.size(); i++){
+            if(m1[i].size()!=m2[i].size()){
+                throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same");
+            }
+            for(int k = 0; k < m1[i].size(); k ++){
+                retMat[i][k] = m1[i][k] - m2[i][k];
+            }
+        }
+        break;
+    }
+    case '*':{
+        for(int i = 0; i < m1.size(); i++){
+            if(m1[i].size()!=m2[i].size()){
+                throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same");
+            }
+            for(int k = 0; k < m1[i].size(); k ++){
+                retMat[i][k] = m1[i][k] * m2[i][k];
+            }
+        }
+        break;
+    }
+    case '/':{
+        for(int i = 0; i < m1.size(); i++){
+            if(m1[i].size()!=m2[i].size()){
+                throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same");
+            }
+            for(int k = 0; k < m1[i].size(); k ++){
+                retMat[i][k] = m1[i][k] / m2[i][k];
+            }
+        }
+        break;
+    }
+    default:
+
+        break;
+    }
+}
+
+void elemWiseOperation(matrix &src, char o, int scalar) {
+    switch (o) {
+    case '+':{
+        auto func = [scalar](double &c) -> double{ return c+scalar; };
+        for(int i = 0; i < src.size(); i++)
+            std::transform(src[i].begin(), src[i].end(), src[i].begin(), func);
+        break;
+    }
+    case '-':{
+        auto func = [scalar](double &c) -> double{ return c-scalar; };
+        for(int i = 0; i < src.size(); i++)
+            std::transform(src[i].begin(), src[i].end(), src[i].begin(), func);
+        break;
+    }
+    case '*':{
+        auto func = [scalar](double &c) -> double{ return c*scalar; };
+        for(int i = 0; i < src.size(); i++)
+            std::transform(src[i].begin(), src[i].end(), src[i].begin(), func);
+        break;
+    }
+    case '/':{
+        auto func = [scalar](double &c) -> double{ return c/scalar; };
+        for(int i = 0; i < src.size(); i++)
+            std::transform(src[i].begin(), src[i].end(), src[i].begin(), func);
+        break;
+    }
+    case 'a':{
+        auto func = [](double &c) -> double{ return abs(c); };
+        for(int i = 0; i < src.size(); i++)
+            std::transform(src[i].begin(), src[i].end(), src[i].begin(), func);
+        break;
+    }
+    case 'l':{
+        auto func = [](double &c) -> double{ return log(c); };
+        for(int i = 0; i < src.size(); i++)
+            std::transform(src[i].begin(), src[i].end(), src[i].begin(), func);
+        break;
+    }
+    default:
+
+        break;
+    }
+}
+
+bool isMatrixDiagonal(matrix src) {
+    for(int i = 0; i < src.size(); i++){
+        for(int k = 0; k < src[i].size(); k++){
+            if(k == i) continue;
+            if(src[i][k] != 0) return false;
+        }
+    }
+    return true;
 }
 
 matrix getTranspose(matrix src) {
@@ -59,6 +176,17 @@ matrix getTranspose(matrix src) {
     }
 
     return trans_vec;
+}
+
+matrix getLogOf(matrix src) { //TODO: Implement this func
+    assertm(!src.empty(), "Called linalg::getLogOf with empty matrix");
+
+    if(isMatrixDiagonal(src)){
+        elemWiseOperation(src, 'l');
+    }else{
+        throw std::runtime_error("Matrix log not implemented for non diagonal matricies");
+    }
+    return src;
 }
 
 std::vector<double> getDiagonal(matrix a){
@@ -81,6 +209,15 @@ std::vector<double> getDiagonal(matrix a){
 double trace(matrix a){
     std::vector<double> v = getDiagonal(a);
     return std::accumulate(v.begin(), v.end(), 0);
+}
+
+double sumOf(matrix a){
+    double sum = 0;
+    for(int i = 0; i < a.size(); i++){
+        std::vector<double> v = a[i];
+        sum += std::accumulate(v.begin(), v.end(), 0);;
+    }
+    return sum;
 }
 
 double getDeterminant(const matrix vect) {
@@ -179,13 +316,13 @@ matrix getInverse(const matrix vect) {
 void printMatrix(const matrix vect) {
     for(std::size_t i = 0; i < vect.size(); i++) {
         for(std::size_t j = 0; j < vect[0].size(); j++) {
-            std::cout << std::setw(8) << vect[i][j] << " ";
+            std::cout << std::setw(12) << vect[i][j] << " ";
         }
         std::cout << "\n";
     }
 }
 
-matrix multiply(matrix &a, matrix &b)
+matrix multiply(matrix a, matrix b)
 {
     const int n = a.size();     // a rows
     const int m = a[0].size();  // a cols

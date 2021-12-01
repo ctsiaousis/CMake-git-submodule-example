@@ -1,5 +1,6 @@
 #include "Definitions.h"
 #include "CSVParser.h"
+#include "Utils/Metrics.h"
 
 int main()
 {
@@ -26,8 +27,15 @@ int main()
 
     linalg::printMatrix(test);
 
-    std::vector<double> t = mUsers[69].getFeatures();
-    linalg::printVector(t);
+    linalg::matrix t = mUsers[69].getFeatures();
+    linalg::printMatrix(t);
+
+    metric::KLDivergence(mUsers[50],mItems[50]);
+
+    std::cout << std::endl<< std::endl<< std::endl;
+
+    linalg::matrix mTst = linalg::getTranspose(mUsers[30].getCovarianceMatrix(true));
+
 
     return 0;
 }

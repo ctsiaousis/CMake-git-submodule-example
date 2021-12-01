@@ -16,6 +16,7 @@
 #include <random>
 
 #include "Utils/LinearAlgebra.h"
+#include "Utils/LinearAlgebra.h"
 
 
 // #define NDEBUG // uncomment to disable assert()
