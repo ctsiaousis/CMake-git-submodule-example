@@ -25,5 +25,9 @@ int main()
     linalg::matrix test = linalg::multiply(m1, m2);
 
     linalg::printMatrix(test);
+
+    std::vector<double> t = mUsers[69].getFeatures();
+    linalg::printVector(t);
+
     return 0;
 }

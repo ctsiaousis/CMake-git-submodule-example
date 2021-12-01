@@ -5,7 +5,7 @@ Entry::Entry()
 {
     variance = linalg::matrix(MAX_FEATURES, std::vector<double>(MAX_FEATURES, 0));
 
-    feature_means.reserve(MAX_FEATURES);
+    feature_means = std::vector<double>(MAX_FEATURES, 0);
 }
 
 std::string Entry::getId() const
@@ -25,6 +25,11 @@ void Entry::setFeatures(std::vector<double> vecIn)
     for(int i = 0; i < MAX_FEATURES; i++){
         feature_means[i] = vecIn.at(i);
     }
+}
+
+std::vector<double> Entry::getFeatures()
+{
+    return feature_means;
 }
 
 linalg::matrix Entry::getCovarianceMatrix(bool inverse){

@@ -27,13 +27,24 @@ static double trace(matrix a);
 static double getDeterminant(const matrix vect);
 static matrix getCofactor(const matrix vect);
 static matrix getInverse(const matrix vect);
-static void printMatrix(const matrix vect);
 static matrix multiply(matrix &a, matrix &b);
+static void printMatrix(const matrix vect);
+static void printVector(const std::vector<double> vect);
 
 
 
 
 ////////////////////////////////////////////////// IMPLEMENTATIONS //////////////////////////////////////////////////
+
+
+void printVector(const std::vector<double> vect) {
+    std::cout << "[ ";
+    for(std::size_t i = 0; i < vect.size(); i++) {
+            std::cout << vect[i] << ((i < vect.size()-1)?" , ":" ");
+    }
+    std::cout << "] \n";
+}
+
 matrix getTranspose(matrix src) {
     assertm(!src.empty(), "Called linalg::transpose with empty matrix");
 

@@ -17,6 +17,8 @@ public:
 
     void setFeatures(std::vector<double> vecIn);
 
+    std::vector<double> getFeatures();
+
     linalg::matrix getCovarianceMatrix(bool inverse = false);
 
     static linalg::matrix covarianceMat(Entry e1,Entry e2);
