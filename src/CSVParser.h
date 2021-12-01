@@ -2,6 +2,8 @@
 #define CSVPARSER_H
 
 #include "Definitions.h"
+#include "ProjectClasses/UserEntry.h"
+#include "ProjectClasses/ItemEntry.h"
 
 namespace utils {
 
