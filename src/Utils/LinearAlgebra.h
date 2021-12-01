@@ -18,9 +18,23 @@
 
 
 namespace linalg {
+
 typedef std::vector< std::vector<double> > matrix;
 
-static matrix getTranspose(matrix src) {
+static matrix getTranspose(matrix src);
+static std::vector<double> getDiagonal(matrix a);
+static double trace(matrix a);
+static double getDeterminant(const matrix vect);
+static matrix getCofactor(const matrix vect);
+static matrix getInverse(const matrix vect);
+static void printMatrix(const matrix vect);
+static matrix multiply(matrix &a, matrix &b);
+
+
+
+
+////////////////////////////////////////////////// IMPLEMENTATIONS //////////////////////////////////////////////////
+matrix getTranspose(matrix src) {
     assertm(!src.empty(), "Called linalg::transpose with empty matrix");
 
     matrix trans_vec(src[0].size(), std::vector<double>());
@@ -36,7 +50,7 @@ static matrix getTranspose(matrix src) {
     return trans_vec;
 }
 
-static std::vector<double> diagonal(matrix a){
+std::vector<double> getDiagonal(matrix a){
     std::vector<double> retDiag;
 
     assertm(!a.empty(), "Called linalg::diagonal with empty matrix");
@@ -53,12 +67,12 @@ static std::vector<double> diagonal(matrix a){
     return retDiag;
 }
 
-static double trace(matrix a){
-    std::vector<double> v = diagonal(a);
+double trace(matrix a){
+    std::vector<double> v = getDiagonal(a);
     return std::accumulate(v.begin(), v.end(), 0);
 }
 
-static double getDeterminant(const matrix vect) {
+double getDeterminant(const matrix vect) {
     if(vect.size() != vect[0].size()) {
         throw std::runtime_error("Matrix is not quadratic");
     }
@@ -101,7 +115,7 @@ static double getDeterminant(const matrix vect) {
     return result;
 }
 
-static matrix getCofactor(const matrix vect) {
+matrix getCofactor(const matrix vect) {
     if(vect.size() != vect[0].size()) {
         throw std::runtime_error("Matrix is not quadratic");
     }
@@ -135,7 +149,7 @@ static matrix getCofactor(const matrix vect) {
     return solution;
 }
 
-static matrix getInverse(const matrix vect) {
+matrix getInverse(const matrix vect) {
     if(getDeterminant(vect) == 0) {
         throw std::runtime_error("Determinant is 0");
     }
@@ -151,7 +165,7 @@ static matrix getInverse(const matrix vect) {
     return getTranspose(getCofactor(solution));
 }
 
-static void printMatrix(const matrix vect) {
+void printMatrix(const matrix vect) {
     for(std::size_t i = 0; i < vect.size(); i++) {
         for(std::size_t j = 0; j < vect[0].size(); j++) {
             std::cout << std::setw(8) << vect[i][j] << " ";
@@ -159,6 +173,30 @@ static void printMatrix(const matrix vect) {
         std::cout << "\n";
     }
 }
+
+matrix multiply(matrix &a, matrix &b)
+{
+    const int n = a.size();     // a rows
+    const int m = a[0].size();  // a cols
+    const int p = b[0].size();  // b cols
+
+    matrix c(n, std::vector<double>(p, 0));
+    for (auto j = 0; j < p; ++j)
+    {
+        for (auto k = 0; k < m; ++k)
+        {
+            for (auto i = 0; i < n; ++i)
+            {
+                c[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+    return c;
+}
+
+
+
+
 }
 
 #endif // LINEARALGEBRA_H

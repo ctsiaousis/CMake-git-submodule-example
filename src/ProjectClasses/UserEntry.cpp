@@ -3,11 +3,7 @@
 UserEntry::UserEntry()
 {
     Entry();
-    for(int i = 0; i < MAX_FEATURES; i++){
-        for(int j = 0; j < MAX_FEATURES; j++){
-            variance[i][j] = 2;
-        }
-    }
+    for(int i = 0; i < MAX_FEATURES; i++) variance[i][i] = 2;
 }
 
 UserEntry UserEntry::createMeFrom(std::string line)

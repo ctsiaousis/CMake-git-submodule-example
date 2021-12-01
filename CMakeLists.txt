@@ -11,12 +11,13 @@ set(DATADIR "${CMAKE_CURRENT_SOURCE_DIR}/data/")
 
 # add all the source codes to the SOURCES variable
 set(SOURCES
-    ${SRCDIR}Definitions.h ${SRCDIR}CSVParser.h
-    ${SRCDIR}Utils/Metrics.h ${SRCDIR}Utils/LinearAlgebra.h
+    ${SRCDIR}Definitions.h              ${SRCDIR}CSVParser.h
+    ${SRCDIR}Utils/Metrics.h            ${SRCDIR}Utils/LinearAlgebra.h
     ${SRCDIR}ProjectClasses/Entry.h     ${SRCDIR}ProjectClasses/Entry.cpp
     ${SRCDIR}ProjectClasses/UserEntry.h ${SRCDIR}ProjectClasses/UserEntry.cpp
     ${SRCDIR}ProjectClasses/ItemEntry.h ${SRCDIR}ProjectClasses/ItemEntry.cpp
-    ${SRCDIR}main.cpp)
+    ${SRCDIR}main.cpp
+    )
 
 # add users filename to the USR_FILE_PATH variable
 add_definitions(-DUSR_FILE_PATH="${DATADIR}users.csv")

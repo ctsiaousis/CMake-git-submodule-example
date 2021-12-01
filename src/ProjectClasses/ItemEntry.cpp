@@ -4,11 +4,7 @@
 ItemEntry::ItemEntry()
 {
     Entry();
-    for(int i = 0; i < MAX_FEATURES; i++){
-        for(int j = 0; j < MAX_FEATURES; j++){
-            variance[i][j] = 1;
-        }
-    }
+    for(int i = 0; i < MAX_FEATURES; i++) variance[i][i] = 1;
 }
 
 

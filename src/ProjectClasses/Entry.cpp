@@ -3,9 +3,7 @@
 
 Entry::Entry()
 {
-    variance = linalg::matrix(MAX_FEATURES, std::vector<double>(MAX_FEATURES));
-
-    for(int i = 0; i < MAX_FEATURES; i++) variance[i].reserve(MAX_FEATURES);
+    variance = linalg::matrix(MAX_FEATURES, std::vector<double>(MAX_FEATURES, 0));
 
     feature_means.reserve(MAX_FEATURES);
 }

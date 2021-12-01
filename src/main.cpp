@@ -18,6 +18,12 @@ int main()
         std::cout << i << std::endl;
     }
 
+    linalg::matrix m1 = mUsers[100].getCovarianceMatrix(true);
 
+    linalg::matrix m2 = mItems[100].getCovarianceMatrix();
+
+    linalg::matrix test = linalg::multiply(m1, m2);
+
+    linalg::printMatrix(test);
     return 0;
 }
