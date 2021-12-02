@@ -10,9 +10,6 @@
 #include <vector>
 #include <math.h>
 
-#include "Eigen/Core"
-#include "Eigen/Dense"
-
 // #define NDEBUG // uncomment to disable assert()
 #include <cassert>
 
@@ -360,19 +357,6 @@ double getNormDistByMathFormula( double x, double m, double var){
     double pwr   = -( powf(x-m,2)/(2*var*var));
     return first * powf(M_E, pwr);
 }
-
-
-class Mvn
-{
-public:
-  Mvn(const Eigen::VectorXd& mu,
-      const Eigen::MatrixXd& s);
-  ~Mvn();
-  double pdf(const Eigen::VectorXd& x) const;
-  Eigen::VectorXd sample(unsigned int nr_iterations = 20) const;
-  Eigen::VectorXd mean;
-  Eigen::MatrixXd sigma;
-};
 
 
 }

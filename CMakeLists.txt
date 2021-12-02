@@ -19,6 +19,7 @@ set(DATADIR "${CMAKE_CURRENT_SOURCE_DIR}/data/")
 set(SOURCES
     ${SRCDIR}Definitions.h              ${SRCDIR}CSVParser.h
     ${SRCDIR}Utils/Metrics.h            ${SRCDIR}Utils/LinearAlgebra.h
+    ${SRCDIR}Utils/MyEigenFuncs.h       ${SRCDIR}Utils/MyEigenFuncs.cpp
     ${SRCDIR}ProjectClasses/Entry.h     ${SRCDIR}ProjectClasses/Entry.cpp
     ${SRCDIR}ProjectClasses/UserEntry.h ${SRCDIR}ProjectClasses/UserEntry.cpp
     ${SRCDIR}ProjectClasses/ItemEntry.h ${SRCDIR}ProjectClasses/ItemEntry.cpp
