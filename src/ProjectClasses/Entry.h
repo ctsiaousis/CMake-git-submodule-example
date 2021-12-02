@@ -5,9 +5,10 @@
 
 class Entry{
     std::string id;
+    int norm_dist_space = 0;
 protected:
-    linalg::matrix variance; // Var(Z)=Cov(Z,Z)
-    linalg::matrix feature_means;
+    linalg::matrix      variance; // Var(Z)=Cov(Z,Z)
+    linalg::matrix      feature_means;
 public:
     Entry();
 

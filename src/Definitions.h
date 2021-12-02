@@ -33,4 +33,15 @@
 #endif
 
 
+#ifndef NORM_DIST_START
+#define NORM_DIST_START -8
+#endif
+#ifndef NORM_DIST_END
+#define NORM_DIST_END 18
+#endif
+#ifndef NORM_DIST_STEP
+#define NORM_DIST_STEP 0.1f
+#endif
+
+
 #endif // DEFINITIONS_H

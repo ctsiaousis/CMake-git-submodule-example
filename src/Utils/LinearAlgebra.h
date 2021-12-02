@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <numeric>
+#include <random>
 #include <vector>
 #include <math.h>
 
@@ -20,22 +21,27 @@
 
 namespace linalg {
 
-typedef std::vector< std::vector<double> > matrix;
+template <class T>
+using mat = std::vector< std::vector<T> >  ;
 
-static matrix getTranspose(matrix src);
-static std::vector<double> getDiagonal(matrix a);
-static double trace(matrix a);
-static double sumOf(matrix a);
-static double getDeterminant(const matrix vect);
-static matrix getCofactor(const matrix vect);
-static matrix getInverse(const matrix vect);
-static matrix multiply(matrix a, matrix b);
-static void printMatrix(const matrix vect);
+typedef mat<double>                                  matrix;
+typedef mat< std::normal_distribution< double > >    mvarnorm;
+
+static mat<double> getTranspose(mat<double> src);
+static std::vector<double> getDiagonal(mat<double> a);
+static double trace(mat<double> a);
+static double sumOf(mat<double> a);
+static double getDeterminant(const mat<double> vect);
+static mat<double> getCofactor(const mat<double> vect);
+static mat<double> getInverse(const mat<double> vect);
+static mat<double> multiply(mat<double> a, mat<double> b);
+static void printMatrix(const mat<double> vect);
 static void printVector(const std::vector<double> vect);
-static matrix getLogOf(matrix src); //TODO: Implement this func
-static void elemWiseOperation(matrix &src, char o, int scalar = -1);
-static matrix elemWiseOperation(matrix m1, char o, matrix m2);
-static bool isMatrixDiagonal(matrix src);
+static mat<double> getLogOf(mat<double> src); //TODO: Implement this func
+static void elemWiseOperation(mat<double> &src, char o, int scalar = -1);
+static mat<double> elemWiseOperation(mat<double> m1, char o, mat<double> m2);
+static bool isMatrixDiagonal(mat<double> src);
+static double getNormDistByMathFormula(double x, double m = 0, double var = 1);
 
 
 
@@ -51,17 +57,17 @@ void printVector(const std::vector<double> vect) {
     std::cout << "] \n";
 }
 
-matrix elemWiseOperation(matrix m1, char o, matrix m2) {
+mat<double> elemWiseOperation(mat<double> m1, char o, mat<double> m2) {
     if(m1.size() != m2.size() || m1.empty() || m2.empty())
-        throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same or are zero");
+        throw std::runtime_error("linalg::elemWiseOperation - mat<double> sizes are not the same or are zero");
 
-    matrix retMat = matrix(m1.size(),std::vector<double>(m1[0].size(),0));
+    mat<double> retMat = mat<double>(m1.size(),std::vector<double>(m1[0].size(),0));
 
     switch (o) {
     case '+':{
         for(int i = 0; i < m1.size(); i++){
             if(m1[i].size()!=m2[i].size()){
-                throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same");
+                throw std::runtime_error("linalg::elemWiseOperation - mat<double> sizes are not the same");
             }
             for(int k = 0; k < m1[i].size(); k ++){
                 retMat[i][k] = m1[i][k] + m2[i][k];
@@ -72,7 +78,7 @@ matrix elemWiseOperation(matrix m1, char o, matrix m2) {
     case '-':{
         for(int i = 0; i < m1.size(); i++){
             if(m1[i].size()!=m2[i].size()){
-                throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same");
+                throw std::runtime_error("linalg::elemWiseOperation - mat<double> sizes are not the same");
             }
             for(int k = 0; k < m1[i].size(); k ++){
                 retMat[i][k] = m1[i][k] - m2[i][k];
@@ -83,7 +89,7 @@ matrix elemWiseOperation(matrix m1, char o, matrix m2) {
     case '*':{
         for(int i = 0; i < m1.size(); i++){
             if(m1[i].size()!=m2[i].size()){
-                throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same");
+                throw std::runtime_error("linalg::elemWiseOperation - mat<double> sizes are not the same");
             }
             for(int k = 0; k < m1[i].size(); k ++){
                 retMat[i][k] = m1[i][k] * m2[i][k];
@@ -94,7 +100,7 @@ matrix elemWiseOperation(matrix m1, char o, matrix m2) {
     case '/':{
         for(int i = 0; i < m1.size(); i++){
             if(m1[i].size()!=m2[i].size()){
-                throw std::runtime_error("linalg::elemWiseOperation - Matrix sizes are not the same");
+                throw std::runtime_error("linalg::elemWiseOperation - mat<double> sizes are not the same");
             }
             for(int k = 0; k < m1[i].size(); k ++){
                 retMat[i][k] = m1[i][k] / m2[i][k];
@@ -106,9 +112,10 @@ matrix elemWiseOperation(matrix m1, char o, matrix m2) {
 
         break;
     }
+    return retMat;
 }
 
-void elemWiseOperation(matrix &src, char o, int scalar) {
+void elemWiseOperation(mat<double> &src, char o, int scalar) {
     switch (o) {
     case '+':{
         auto func = [scalar](double &c) -> double{ return c+scalar; };
@@ -152,7 +159,7 @@ void elemWiseOperation(matrix &src, char o, int scalar) {
     }
 }
 
-bool isMatrixDiagonal(matrix src) {
+bool isMatrixDiagonal(mat<double> src) {
     for(int i = 0; i < src.size(); i++){
         for(int k = 0; k < src[i].size(); k++){
             if(k == i) continue;
@@ -162,10 +169,10 @@ bool isMatrixDiagonal(matrix src) {
     return true;
 }
 
-matrix getTranspose(matrix src) {
-    assertm(!src.empty(), "Called linalg::transpose with empty matrix");
+mat<double> getTranspose(mat<double> src) {
+    assertm(!src.empty(), "Called linalg::transpose with empty mat<double>");
 
-    matrix trans_vec(src[0].size(), std::vector<double>());
+    mat<double> trans_vec(src[0].size(), std::vector<double>());
 
     for (int i = 0; i < src.size(); i++)
     {
@@ -178,26 +185,26 @@ matrix getTranspose(matrix src) {
     return trans_vec;
 }
 
-matrix getLogOf(matrix src) { //TODO: Implement this func
-    assertm(!src.empty(), "Called linalg::getLogOf with empty matrix");
+mat<double> getLogOf(mat<double> src) { //TODO: Implement this func
+    assertm(!src.empty(), "Called linalg::getLogOf with empty mat<double>");
 
     if(isMatrixDiagonal(src)){
         elemWiseOperation(src, 'l');
     }else{
-        throw std::runtime_error("Matrix log not implemented for non diagonal matricies");
+        throw std::runtime_error("mat<double> log not implemented for non diagonal matricies");
     }
     return src;
 }
 
-std::vector<double> getDiagonal(matrix a){
+std::vector<double> getDiagonal(mat<double> a){
     std::vector<double> retDiag;
 
-    assertm(!a.empty(), "Called linalg::diagonal with empty matrix");
+    assertm(!a.empty(), "Called linalg::diagonal with empty mat<double>");
 
     int cols = a.size();
     int rows = a[0].size();
 
-    assertm(cols == rows, "Cannot find diagonal in a non square matrix.");
+    assertm(cols == rows, "Cannot find diagonal in a non square mat<double>.");
 
     for(int i = 0; i < cols; i++){
         retDiag.push_back(a[i][i]);
@@ -206,12 +213,12 @@ std::vector<double> getDiagonal(matrix a){
     return retDiag;
 }
 
-double trace(matrix a){
+double trace(mat<double> a){
     std::vector<double> v = getDiagonal(a);
     return std::accumulate(v.begin(), v.end(), 0);
 }
 
-double sumOf(matrix a){
+double sumOf(mat<double> a){
     double sum = 0;
     for(int i = 0; i < a.size(); i++){
         std::vector<double> v = a[i];
@@ -220,9 +227,9 @@ double sumOf(matrix a){
     return sum;
 }
 
-double getDeterminant(const matrix vect) {
+double getDeterminant(const mat<double> vect) {
     if(vect.size() != vect[0].size()) {
-        throw std::runtime_error("Matrix is not quadratic");
+        throw std::runtime_error("mat<double> is not quadratic");
     }
     int dimension = vect.size();
 
@@ -234,7 +241,7 @@ double getDeterminant(const matrix vect) {
         return vect[0][0];
     }
 
-    //Formula for 2x2-matrix
+    //Formula for 2x2-mat<double>
     if(dimension == 2) {
         return vect[0][0] * vect[1][1] - vect[0][1] * vect[1][0];
     }
@@ -243,8 +250,8 @@ double getDeterminant(const matrix vect) {
     int sign = 1;
     for(int i = 0; i < dimension; i++) {
 
-        //Submatrix
-        matrix subVect(dimension - 1, std::vector<double> (dimension - 1));
+        //Submat<double>
+        mat<double> subVect(dimension - 1, std::vector<double> (dimension - 1));
         for(int m = 1; m < dimension; m++) {
             int z = 0;
             for(int n = 0; n < dimension; n++) {
@@ -263,13 +270,13 @@ double getDeterminant(const matrix vect) {
     return result;
 }
 
-matrix getCofactor(const matrix vect) {
+mat<double> getCofactor(const mat<double> vect) {
     if(vect.size() != vect[0].size()) {
-        throw std::runtime_error("Matrix is not quadratic");
+        throw std::runtime_error("mat<double> is not quadratic");
     }
 
-    matrix solution(vect.size(), std::vector<double> (vect.size()));
-    matrix subVect(vect.size() - 1, std::vector<double> (vect.size() - 1));
+    mat<double> solution(vect.size(), std::vector<double> (vect.size()));
+    mat<double> subVect(vect.size() - 1, std::vector<double> (vect.size() - 1));
 
     for(std::size_t i = 0; i < vect.size(); i++) {
         for(std::size_t j = 0; j < vect[0].size(); j++) {
@@ -297,12 +304,12 @@ matrix getCofactor(const matrix vect) {
     return solution;
 }
 
-matrix getInverse(const matrix vect) {
+mat<double> getInverse(const mat<double> vect) {
     if(getDeterminant(vect) == 0) {
         throw std::runtime_error("Determinant is 0");
     }
     double d = 1.0/getDeterminant(vect);
-    matrix solution(vect.size(), std::vector<double> (vect.size()));
+    mat<double> solution(vect.size(), std::vector<double> (vect.size()));
 
     for(size_t i = 0; i < vect.size(); i++) {
         for(size_t j = 0; j < vect.size(); j++) {
@@ -313,22 +320,24 @@ matrix getInverse(const matrix vect) {
     return getTranspose(getCofactor(solution));
 }
 
-void printMatrix(const matrix vect) {
+void printMatrix(const mat<double> vect) {
+
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------------------------- \n";
     for(std::size_t i = 0; i < vect.size(); i++) {
         for(std::size_t j = 0; j < vect[0].size(); j++) {
             std::cout << std::setw(12) << vect[i][j] << " ";
         }
-        std::cout << "\n";
+        std::cout << "\n - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n";
     }
 }
 
-matrix multiply(matrix a, matrix b)
+mat<double> multiply(mat<double> a, mat<double> b)
 {
     const int n = a.size();     // a rows
     const int m = a[0].size();  // a cols
     const int p = b[0].size();  // b cols
 
-    matrix c(n, std::vector<double>(p, 0));
+    mat<double> c(n, std::vector<double>(p, 0));
     for (auto j = 0; j < p; ++j)
     {
         for (auto k = 0; k < m; ++k)
@@ -343,6 +352,32 @@ matrix multiply(matrix a, matrix b)
 }
 
 
+double getNormDistByMathFormula( double x, double m, double var){
+    double first = 1/(sqrtf(2*M_PI*var*var));
+    double pwr   = -( powf(x-m,2)/(2*var*var));
+    return first * powf(M_E, pwr);
+}
+
+
+class Mvn
+{
+public:
+  Mvn(const std::vector<double>& mu,
+      const matrix& s);
+  ~Mvn();
+  double pdf(const std::vector<double>& x) const{
+      double n = x.size();
+      double sqrt2pi = std::sqrt(2 * M_PI);
+      double quadform  = (x - mean).transpose() * getInverse(sigma) * (x - mean);
+      double norm = std::pow(sqrt2pi, - n) *
+                    std::pow(sigma.determinant(), - 0.5);
+
+      return norm * exp(-0.5 * quadform);
+    }
+  std::vector<double> sample(unsigned int nr_iterations = 20) const;
+  std::vector<double> mean;
+  matrix sigma;
+};
 
 
 }
