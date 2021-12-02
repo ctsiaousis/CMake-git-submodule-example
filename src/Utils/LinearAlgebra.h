@@ -10,6 +10,9 @@
 #include <vector>
 #include <math.h>
 
+#include "Eigen/Core"
+#include "Eigen/Dense"
+
 // #define NDEBUG // uncomment to disable assert()
 #include <cassert>
 
@@ -362,21 +365,13 @@ double getNormDistByMathFormula( double x, double m, double var){
 class Mvn
 {
 public:
-  Mvn(const std::vector<double>& mu,
-      const matrix& s);
+  Mvn(const Eigen::VectorXd& mu,
+      const Eigen::MatrixXd& s);
   ~Mvn();
-  double pdf(const std::vector<double>& x) const{
-      double n = x.size();
-      double sqrt2pi = std::sqrt(2 * M_PI);
-      double quadform  = (x - mean).transpose() * getInverse(sigma) * (x - mean);
-      double norm = std::pow(sqrt2pi, - n) *
-                    std::pow(sigma.determinant(), - 0.5);
-
-      return norm * exp(-0.5 * quadform);
-    }
-  std::vector<double> sample(unsigned int nr_iterations = 20) const;
-  std::vector<double> mean;
-  matrix sigma;
+  double pdf(const Eigen::VectorXd& x) const;
+  Eigen::VectorXd sample(unsigned int nr_iterations = 20) const;
+  Eigen::VectorXd mean;
+  Eigen::MatrixXd sigma;
 };
 
 

@@ -5,11 +5,11 @@ project(MASproject LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-find_package(Eigen3 REQUIRED)
+make_directory(eigen/build_dir)
+add_subdirectory(eigen)
+
+set(EIGEN3_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/eigen/Eigen")
 include_directories(${EIGEN3_INCLUDE_DIR})
-message("${CMAKE_MODULE_PATH}")
-message("${EIGEN3_INCLUDE_DIR}")
 
 set(SRCDIR "${CMAKE_CURRENT_SOURCE_DIR}/src/")
 set(DATADIR "${CMAKE_CURRENT_SOURCE_DIR}/data/")
@@ -33,3 +33,5 @@ add_definitions(-DITM_FILE_PATH="${DATADIR}items.csv")
 
 
 add_executable(MASproject ${SOURCES})
+target_link_libraries (MASproject Eigen3::Eigen)
+
