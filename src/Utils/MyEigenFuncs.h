@@ -6,6 +6,8 @@
 namespace eg
 {
 
+template <int T> using mat = Eigen::Matrix<double, T, T> ;
+template <int T> using vec = Eigen::Matrix<double, T, 1> ;
 
     class MVnorm
     {

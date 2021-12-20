@@ -5,10 +5,9 @@
 
 class Entry{
     std::string id;
-    int norm_dist_space = 0;
 protected:
-    linalg::matrix      variance; // Var(Z)=Cov(Z,Z)
-    linalg::matrix      feature_means;
+    eg::mat<MAX_FEATURES>      variance; // Var(Z)=Cov(Z,Z)
+    eg::vec<MAX_FEATURES>      feature_means;
 public:
     Entry();
 
@@ -18,13 +17,13 @@ public:
 
     void setFeatures(std::vector<double> vecIn);
 
-    linalg::matrix getFeatures();
+    Eigen::MatrixXd getFeatures();
 
-    linalg::matrix getCovarianceMatrix(bool inverse = false);
+    Eigen::MatrixXd getCovarianceMatrix(bool inverse = false);
 
-    static linalg::matrix covarianceMat(Entry e1,Entry e2);
+    static Eigen::MatrixXd covarianceMat(Entry e1,Entry e2);
 
-    static linalg::matrix meanMat(Entry e1,Entry e2);
+    static Eigen::MatrixXd meanMat(Entry e1,Entry e2);
 };
 
 

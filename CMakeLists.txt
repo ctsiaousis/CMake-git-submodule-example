@@ -5,9 +5,7 @@ project(MASproject LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-make_directory(eigen/build_dir)
 add_subdirectory(eigen)
-
 set(EIGEN3_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/eigen/Eigen")
 include_directories(${EIGEN3_INCLUDE_DIR})
 

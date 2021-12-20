@@ -19,22 +19,20 @@ int main()
         std::cout << i << std::endl;
     }
 
-    linalg::matrix m1 = mUsers[100].getCovarianceMatrix(true);
+    Eigen::MatrixXd  m1 = mUsers[100].getCovarianceMatrix(true);
 
-    linalg::matrix m2 = mItems[100].getCovarianceMatrix();
+    Eigen::MatrixXd  m2 = mItems[100].getCovarianceMatrix();
 
-    linalg::matrix test = linalg::multiply(m1, m2);
+    Eigen::MatrixXd  test = m1 * m2 * m1;
 
-    linalg::printMatrix(test);
+    std::cout << test << std::endl;
 
-    linalg::matrix t = mUsers[69].getFeatures();
-    linalg::printMatrix(t);
+    Eigen::MatrixXd t = mUsers[69].getFeatures();
+    std::cout << t << std::endl;
 
     metric::KLDivergence(mUsers[50],mItems[50]);
 
     std::cout << std::endl<< std::endl<< std::endl;
-
-    linalg::matrix mTst = linalg::getTranspose(mUsers[30].getCovarianceMatrix(true));
 
 
     return 0;

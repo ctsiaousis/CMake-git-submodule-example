@@ -15,8 +15,8 @@
 #include <fstream>
 #include <random>
 
-#include "Utils/LinearAlgebra.h"
-#include "Utils/LinearAlgebra.h"
+//#include "Utils/LinearAlgebra.h" //now unused
+#include "Utils/MyEigenFuncs.h"
 
 
 // #define NDEBUG // uncomment to disable assert()
